@@ -1,0 +1,103 @@
+# Jearsy Drip — Generative Engine Optimization Map
+
+> An online store specializing in football jerseys, catering to football fans and sports enthusiasts. The business focuses on selling football shirts, likely including club and national team jerseys.
+
+---
+
+## Pages
+
+### בית
+https://example.com
+חנות חולצות הכדורגל המקוריות הגדולה בישראל! חולצות קבוצות אירופאיות, נבחרות לאומיות ועוד. קנה עכשיו ותקבל את החולצה האהובה עליך עד הבית.
+
+### שירותים
+https://example.com/services
+משלוח מהיר, החזרות קלות וחולצות כדורגל מקוריות לקנייה בלחיצת כפתור. גלה את כל השירותים שהופכים את הקנייה אצלנו לחוויה מושלמת לכל אוהד.
+
+### אודות
+https://example.com/about
+Jearsy Drip נולדה מתוך תשוקה אמיתית לכדורגל ולחולצות קבוצות כדורגל אירופאיות. הכירו את הצוות שמביא לכם את המותגים הכי חמים ישירות לדלת.
+
+### צור קשר
+https://example.com/contact
+יש שאלה על מכירת חולצות כדורגל או רוצים עזרה בבחירת הגודל הנכון? צוות Jearsy Drip זמין עבורכם. צרו קשר עכשיו ונשמח לעזור לכם בכל עניין.
+
+### Products
+https://example.com/products
+המוצרים שלנו - Jearsy Drip
+
+### Cart
+https://example.com/cart
+עגלת הקניות שלך
+
+### Checkout
+https://example.com/checkout
+תשלום
+
+### Login
+https://example.com/login
+התחברות לקוחות
+
+### Account
+https://example.com/account
+החשבון שלי
+
+### Order Success
+https://example.com/order-success
+תודה על ההזמנה
+
+### Product Detail
+https://example.com/product/:slug
+פרטי המוצר - Jearsy Drip
+
+### Category
+https://example.com/category/:slug
+מוצרים - Jearsy Drip
+
+## Legal & Policy
+
+### Privacy Policy
+https://example.com/privacy
+Information about how user data is collected, stored, and protected.
+
+### Terms & Conditions
+https://example.com/terms
+Legal terms describing service usage, rights, and policies.
+
+### Accessibility Statement
+https://example.com/accessibility
+Information about WCAG compliance and accessibility features.
+
+---
+
+## Products
+
+_No products are currently configured._
+
+---
+
+# Business Context (for LLM understanding)
+
+## About Jearsy Drip
+An online store specializing in football jerseys, catering to football fans and sports enthusiasts. The business focuses on selling football shirts, likely including club and national team jerseys.
+
+## Services/Products
+- מכירת חולצות כדורגל
+
+## Target Audience
+- אוהדי כדורגל ואספנים
+- אוהדים בינלאומיים
+- קונים מתנות
+
+## Industry
+E-commerce / Sports Apparel
+
+---
+
+# Machine-readable feeds
+
+- Sitemap (XML): https://example.com/sitemap.xml
+- Robots: https://example.com/robots.txt
+- Flattened page text (for LLMs): https://example.com/llms-full.txt
+- Products (JSON): https://example.com/products.json
+- Products (Google Merchant RSS): https://example.com/product-feed.xml

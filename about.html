@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>הסיפור מאחורי האהבה לכדורגל — Jearsy Drip</title>
+    <meta name="description" content="Jearsy Drip נולדה מתוך תשוקה אמיתית לכדורגל ולחולצות קבוצות כדורגל אירופאיות. הכירו את הצוות שמביא לכם את המותגים הכי חמים ישירות לדלת.">
+    <meta name="keywords" content="אודות Jearsy Drip, חולצות כדורגל, חולצות קבוצות כדורגל אירופאיות, מותג ספורט ישראלי, חנות כדורגל מקצועית">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Zappy Analytics -->
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  var config = {
+    websiteId: 'b777b60f-eb42-46af-a4d7-3e43bd626c71',
+    apiUrl: 'https://api.zappy5.com/api/analytics/track',
+    sessionDuration: 30 * 60 * 1000, // 30 minutes
+    visitorDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
+    trackPageViews: true,
+    trackClicks: true,
+    trackFormSubmissions: true
+  };
+  
+  // Generate or retrieve persistent visitor ID (30 days)
+  function getVisitorId() {
+    var visitorKey = 'zappy_visitor_' + config.websiteId;
+    var visitor = null;
+    
+    try {
+      visitor = localStorage.getItem(visitorKey);
+      if (visitor) {
+        var visitorData = JSON.parse(visitor);
+        var now = Date.now();
+        
+        // Check if visitor ID is still valid (30 days)
+        if (now - visitorData.created < config.visitorDuration) {
+          // Update last seen timestamp
+          visitorData.lastSeen = now;
+          localStorage.setItem(visitorKey, JSON.stringify(visitorData));
+          return visitorData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: LocalStorage not available');
+    }
+    
+    // Generate new visitor ID
+    var newVisitorId = 'zv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      localStorage.setItem(visitorKey, JSON.stringify({
+        id: newVisitorId,
+        created: Date.now(),
+        lastSeen: Date.now()
+      }));
+    } catch (e) {
+      // Continue without local storage
+    }
+    
+    return newVisitorId;
+  }
+  
+  // Generate or retrieve session ID (30 minutes)
+  function getSessionId() {
+    var sessionKey = 'zappy_session_' + config.websiteId;
+    var session = null;
+    
+    try {
+      session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        var sessionData = JSON.parse(session);
+        var now = Date.now();
+        
+        // Check if session is still valid
+        if (now - sessionData.timestamp < config.sessionDuration) {
+          // Update timestamp
+          sessionData.timestamp = now;
+          sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+          return sessionData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: SessionStorage not available');
+    }
+    
+    // Generate new session ID
+    var newSessionId = 'zs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        id: newSessionId,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Continue without session storage
+    }
+    
+    return newSessionId;
+  }
+  
+  var visitorId = getVisitorId();
+  var sessionId = getSessionId();
+  
+  // Track an event
+  function trackEvent(eventType, data) {
+    data = data || {};
+    
+    var eventData = {
+      website_id: config.websiteId,
+      event_type: eventType,
+      page_path: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      visitor_id: visitorId,
+      session_id: sessionId,
+      metadata: data
+    };
+    
+    // Use sendBeacon if available (better for page unload events)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([JSON.stringify(eventData)], { type: 'application/json' });
+      navigator.sendBeacon(config.apiUrl, blob);
+    } else {
+      // Fallback to fetch
+      fetch(config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData),
+        keepalive: true
+      }).catch(function(error) {
+        console.warn('Zappy Analytics: Failed to track event', error);
+      });
+    }
+  }
+  
+  // Track page view
+  if (config.trackPageViews) {
+    trackEvent('pageview', {
+      title: document.title,
+      url: window.location.href
+    });
+  }
+  
+  // Track clicks on important elements
+  if (config.trackClicks) {
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      
+      // Track button clicks (counted as actions)
+      if (target.tagName === 'BUTTON' || target.closest('button')) {
+        var button = target.tagName === 'BUTTON' ? target : target.closest('button');
+        trackEvent('click', {
+          element: 'button',
+          text: button.textContent.trim().substring(0, 100),
+          id: button.id || null,
+          class: button.className || null
+        });
+      }
+      
+      // Track link clicks (navigation - not counted as actions)
+      else if (target.tagName === 'A' || target.closest('a')) {
+        var link = target.tagName === 'A' ? target : target.closest('a');
+        trackEvent('navigation', {
+          element: 'link',
+          text: link.textContent.trim().substring(0, 100),
+          href: link.href,
+          external: link.hostname !== window.location.hostname
+        });
+      }
+    }, true);
+  }
+  
+  // Track form submissions
+  if (config.trackFormSubmissions) {
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      
+      trackEvent('form_submit', {
+        form_id: form.id || null,
+        form_name: form.name || null,
+        form_action: form.action || null,
+        form_method: form.method || 'GET'
+      });
+    }, true);
+  }
+  
+  // Track time on page (send on page unload)
+  var pageLoadTime = Date.now();
+  
+  window.addEventListener('beforeunload', function() {
+    var timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000); // in seconds
+    
+    trackEvent('page_unload', {
+      time_on_page: timeOnPage,
+      page_path: window.location.pathname
+    });
+  });
+  
+  // Expose tracking function globally for custom events
+  window.zappyAnalytics = {
+    track: trackEvent,
+    getVisitorId: function() { return visitorId; },
+    getSessionId: function() { return sessionId; }
+  };
+  
+})();
+</script>
+<!-- End Zappy Analytics -->
+    <meta property="og:title" content="הסיפור מאחורי האהבה לכדורגל — Jearsy Drip">
+    <meta property="og:description" content="Jearsy Drip נולדה מתוך תשוקה אמיתית לכדורגל ולחולצות קבוצות כדורגל אירופאיות. הכירו את הצוות שמביא לכם את המותגים הכי חמים ישירות לדלת.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="הסיפור מאחורי האהבה לכדורגל — Jearsy Drip">
+    <meta name="twitter:description" content="Jearsy Drip נולדה מתוך תשוקה אמיתית לכדורגל ולחולצות קבוצות כדורגל אירופאיות. הכירו את הצוות שמביא לכם את המותגים הכי חמים ישירות לדלת.">
+    <meta property="og:type" content="website">
+  <meta property="og:locale" content="he_IL">
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .skip-link { position: absolute; top: 0; left: 0; transform: translateY(-200%); padding: 12px 18px; background: var(--bg-dark, #1a1a1a); color: var(--text-light, #fff); font-weight: 600; border-radius: 0 0 8px 0; z-index: 10000; }
+    .skip-link:focus { transform: none; outline: 2px solid var(--ring, #fff); outline-offset: 2px; }
+    :focus-visible { outline: 2px solid var(--ring, currentColor); outline-offset: 3px; }
+  </style>
+
+
+  
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css">
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
+    <!-- Mickidum Accessibility Toolbar -->
+    <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+
+    <style id="zappy-dropdown-submenu-styles">
+      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
+      /* Base styles for dropdown submenus - parent must be positioned */
+      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
+      /* Submenu base - hidden by default */
+      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
+      /* CRITICAL: Desktop hover styles to show dropdown */
+      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Submenu item styling */
+      .sub-menu li { list-style: none; margin: 0; padding: 0; }
+      .sub-menu a { display: block !important; padding: 10px 16px !important; color: var(--text-dark, #333) !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
+      .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+      [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 10px !important; padding-right: 28px !important; }
+      .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+      .sub-menu a:hover { background-color: #f5f5f5; }
+      /* RTL (Hebrew/Arabic) dropdown positioning */
+      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
+      /* Hide empty dropdown menus (exclude catalog sub-menus that use <a> children instead of <li>) */
+      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))):not(:has(> a)), .sub-menu:not(:has(li)):not(:has(> a)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      /* Desktop: show submenu on Menu Group hover */
+      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Menu Group title styling */
+      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
+      
+      /* ========== MOBILE SUBMENU STYLES ========== */
+      @media (max-width: 768px) {
+        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
+        .navbar .sub-menu.mobile-expanded, .nav-menu .sub-menu.mobile-expanded, #navMenu .sub-menu.mobile-expanded { max-height: none !important; overflow-y: visible !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
+        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
+        /* Disable hover behavior on mobile */
+        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
+        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; position: relative !important; min-height: 44px !important; }
+        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; min-width: 0 !important; }
+        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; min-width: 0 !important; padding: 0 !important; line-height: inherit !important; }
+        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu, .navbar li:has(.sub-menu) > .sub-menu, #navMenu li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
+        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
+        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: auto !important; background: transparent !important; border: none !important; cursor: pointer !important; color: var(--text-dark) !important; position: static !important; flex-shrink: 0 !important; align-self: stretch !important; z-index: 2 !important; padding: 0 !important; margin: 0 !important; }
+        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
+        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
+        .sub-menu a { padding: 10px 0 !important; display: block !important; color: var(--text-dark) !important; white-space: normal !important; }
+        .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+        [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 0 !important; padding-right: 28px !important; }
+        .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+        .nav-menu.active, #navMenu.active { max-width: 100vw !important; overflow-x: hidden !important; box-sizing: border-box !important; }
+        .navbar .sub-menu li a, nav.navbar .sub-menu li a, .zappy-products-dropdown .sub-menu a { color: var(--text-dark) !important; }
+      }
+      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
+    </style>
+
+    <style id="zappy-widget-visibility">
+      html[dir="rtl"] .whatsapp-float { right: 20px !important; left: auto !important; }
+      html[dir="ltr"] .whatsapp-float, html:not([dir]) .whatsapp-float { left: 20px !important; right: auto !important; }
+      html[dir="rtl"] #mic-access-tool-general-button, html[dir="rtl"] .mic-access-tool-general-button,
+      html[dir="rtl"] #mic-init-access-tool .mic-access-tool-general-button,
+      html[dir="rtl"] #mic-init-access-tool #mic-access-tool-general-button,
+      html[dir="rtl"] ._access-icon { left: 20px !important; right: auto !important; }
+      html[dir="ltr"] #mic-access-tool-general-button, html[dir="ltr"] .mic-access-tool-general-button,
+      html[dir="ltr"] #mic-init-access-tool .mic-access-tool-general-button,
+      html[dir="ltr"] #mic-init-access-tool #mic-access-tool-general-button,
+      html[dir="ltr"] ._access-icon,
+      html:not([dir]) #mic-access-tool-general-button, html:not([dir]) .mic-access-tool-general-button,
+      html:not([dir]) #mic-init-access-tool .mic-access-tool-general-button,
+      html:not([dir]) #mic-init-access-tool #mic-access-tool-general-button,
+      html:not([dir]) ._access-icon { right: 20px !important; left: auto !important; }
+      @media (max-width: 768px) { .whatsapp-float { display: flex !important; } }
+      @media (min-width: 769px) { .whatsapp-float { display: flex !important; } }
+      @media (max-width: 768px) {
+        #mic-access-tool-general-button, .mic-access-tool-general-button,
+        #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+        ._access-icon { display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }
+        #mic-access-tool-box.opened-mic-access-tool, .mic-access-tool-box.opened-mic-access-tool,
+        #mic-init-access-tool #mic-access-tool-box.opened-mic-access-tool {
+          visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+        }
+      }
+      @media (min-width: 769px) {
+        #mic-access-tool-general-button, .mic-access-tool-general-button,
+        #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+        ._access-icon { display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }
+        #mic-access-tool-box.opened-mic-access-tool, .mic-access-tool-box.opened-mic-access-tool,
+        #mic-init-access-tool #mic-access-tool-box.opened-mic-access-tool {
+          visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+        }
+      }
+    </style>
+</head>
+<body>
+
+
+    <div class="mobile-search-panel" id="mobile-search-panel">
+      <div class="search-wrapper">
+        <input type="text" id="mobile-search-input" placeholder="חיפוש מוצרים..." autocomplete="off">
+        <button class="search-submit" id="mobile-search-submit" title="חיפוש">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+        </button>
+        <button class="close-search" id="close-mobile-search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="search-results" id="mobile-search-results"></div>
+    </div>
+  
+<script>window.ZAPPY_WEBSITE_ID = "b777b60f-eb42-46af-a4d7-3e43bd626c71";window.ZAPPY_API_BASE = "https://api.zappy5.com";</script><a class="skip-link" href="#main">דלג לתוכן הראשי</a>
+  <nav class="navbar" dir="rtl">
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display:none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+
+  <button class="phone-header-btn" data-phone="" aria-label="Call">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </button>
+
+  <div class="nav-container">
+    <div class="nav-brand">
+      <a href="/" class="logo-link">
+        <img src="/assets/jearsy-drip-e-commerce-sports-apparel-logo.webp" alt="Jearsy Drip" class="logo">
+      </a>
+    </div>
+
+    <ul class="nav-menu" id="navMenu">
+
+    <li class="menu-item-has-children zappy-products-dropdown">
+      <a href="/products">
+        מוצרים
+        <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9l6 6 6-6"></path>
+        </svg>
+      </a>
+      <ul class="sub-menu" id="zappy-nav-category-links">
+        <li><a href="/products">כל המוצרים</a></li>
+        <!-- Categories will be loaded dynamically -->
+      </ul>
+    </li>
+  <li><a href="/">בית</a></li><li><a href="/services">שירותים</a></li><li><a href="/about">אודות</a></li><li><a href="/contact">צור קשר</a></li></ul><div class="nav-ecommerce-icons nav-icons-left"><a href="/login" class="login-link nav-login" title="התחברות"><svg class="login-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></a><a href="#cart" class="cart-link nav-cart" id="cart-drawer-toggle" title="עגלת קניות"><svg class="cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><span class="cart-count">0</span></a><div class="nav-search-box">
+    <input type="text" class="nav-search-input" id="nav-search-input" placeholder="חיפוש מוצרים..." autocomplete="off">
+    <button class="nav-search-btn" id="nav-search-btn" title="חיפוש">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+    </button>
+    <div class="nav-search-results" id="nav-search-results"></div>
+  </div></div><div class="nav-ecommerce-icons nav-icons-right"><button class="nav-search-toggle" id="mobile-search-toggle" title="חיפוש"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg></button></div>
+
+    
+  </div>
+</nav>
+
+    <nav class="zappy-catalog-menu rtl" id="zappy-catalog-menu" dir="rtl" style="display:none">
+      <div class="catalog-menu-container">
+        <a href="/products" class="catalog-menu-item catalog-menu-all">כל המוצרים</a>
+        <div class="catalog-menu-categories" id="zappy-category-links">
+          <!-- Categories will be loaded dynamically -->
+        </div>
+      </div>
+    </nav>
+  
+  
+  <main id="main">
+    <section class="about-hero-section" data-layout-spec="אודות-hero" dir="rtl" data-hero-type="fullscreen-scrim">
+  <!-- Background Image -->
+  <div class="about-hero-bg">
+    
+  </div>
+
+  <!-- Scrim Overlay -->
+  <div class="about-hero-scrim" aria-hidden="true"></div>
+
+  <!-- Stadium Light Decorative Motif -->
+  <div class="about-hero-stadium-light" aria-hidden="true"></div>
+
+  <!-- Content -->
+  <div class="about-hero-container">
+    <div class="about-hero-content">
+
+      <!-- Subtitle Label with Gold Divider -->
+      <div class="about-hero-label-row">
+        <span class="about-hero-label">אודות Jearsy Drip</span>
+        <div class="about-hero-gold-divider" aria-hidden="true">
+          <svg data-no-icon-edit="true" aria-hidden="true" width="70" height="12" viewBox="0 0 70 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="6" x2="28" y2="6" stroke="#C8A96B" stroke-width="1.5"></line>
+            <polygon points="35,0 40,6 35,12 30,6" fill="#C8A96B"></polygon>
+            <line x1="42" y1="6" x2="70" y2="6" stroke="#C8A96B" stroke-width="1.5"></line>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="about-hero-h1">הסיפור מאחורי<br><span class="about-hero-gold-text">הג׳רסי המושלמת</span></h1>
+
+      <!-- Subtitle -->
+      <h3 class="about-hero-subtitle">אנחנו לא רק מוכרים חולצות כדורגל — אנחנו שומרים על הרגע,<br class="about-hero-br"> על הקבוצה, ועל האהבה לכדורגל.</h3>
+
+      <!-- CTA Buttons -->
+      <div class="about-hero-ctas">
+        <a href="/products" class="about-btn-primary">לקולקציה שלנו</a>
+        <a href="/contact" class="about-btn-ghost">צור קשר <i class="fa fa-arrow-left" aria-hidden="true"></i></a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom Divider -->
+  <div class="about-hero-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,70 L0,38 Q100,28 200,36 T400,30 Q500,26 600,34 T800,28 Q900,24 1000,32 T1200,28 L1200,70 Z" fill="#FAF9F6"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="about-story-section" data-layout-spec="אודות-story" dir="rtl">
+  <!-- Decorative dot grid pattern -->
+  <div class="about-story-dotgrid" aria-hidden="true"></div>
+
+  <div class="about-story-container">
+
+    <!-- Section Label -->
+    <div class="about-story-label-wrap">
+      <span class="about-story-label">הסיפור שלנו</span>
+      <div class="about-story-gold-rule" aria-hidden="true">
+        <span class="gold-line"></span>
+        <svg data-no-icon-edit="true" aria-hidden="true" width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><polygon points="5,0 10,5 5,10 0,5" fill="#C8A96B"></polygon></svg>
+        <span class="gold-line"></span>
+      </div>
+    </div>
+
+    <!-- Main Story Layout: text right, image left -->
+    <div class="about-story-layout">
+
+      <!-- Text Column (right) -->
+      <div class="about-story-text">
+        <h2 class="about-story-heading">מהתשוקה לכדורגל — נולדה Jearsy Drip</h2>
+        <p class="about-story-lead">כשאנחנו אומרים שאנחנו חיים את הכדורגל, אנחנו מתכוונים לזה ברצינות. Jearsy Drip נוסדה על ידי אוהדים שגדלו עם חולצות קבוצות כדורגל אירופאיות מקפלות על המדף, עם עיניים בוהות בכל משחק בינלאומי, עם לב שדופק קצת מהר יותר בכל פעם שמגיעה חולצה חדשה.</p>
+        <p>הבנו שעבור אוהד אמיתי, חולצת כדורגל היא הרבה יותר מבד ותפרים. היא זיכרון עונה שלמה, שיחת חולין עם אבא, הגאווה של לבוש הצבעים הנכונים ביום הגדול. לכן בנינו חנות שמתייחסת לכל חולצה כמו פריט אספנות — עם מידע מדויק, תמונות ברמה גבוהה, ומשלוח שמגיע בזמן.</p>
+
+        <!-- Story Milestones -->
+        <div class="about-story-milestones">
+          <div class="milestone-item">
+            <span class="milestone-year">2019</span>
+            <div class="milestone-content">
+              <h3>ההתחלה</h3>
+              <p>פתחנו את הדלת הדיגיטלית עם קולקציה ראשונה של חולצות מקוריות מקבוצות הפרמייר ליג והליגה הספרדית.</p>
+            </div>
+          </div>
+          <div class="milestone-item">
+            <span class="milestone-year">2021</span>
+            <div class="milestone-content">
+              <h3>הרחבת הקטלוג</h3>
+              <p>הוספנו חולצות נבחרות לאומיות ועיצובים רטרו — כי גם הנוסטלגיה שווה לחגוג.</p>
+            </div>
+          </div>
+          <div class="milestone-item">
+            <span class="milestone-year">היום</span>
+            <div class="milestone-content">
+              <h3>קהילת אוהדים</h3>
+              <p>אלפי לקוחות מרוצים ברחבי הארץ בחרו ב-Jearsy Drip למכירת חולצות כדורגל מקוריות לקנייה — ואנחנו רק מתחילים.</p>
+            </div>
+          </div>
+        </div>
+
+        <a href="/contact" class="about-story-cta btn-primary">צרו קשר <i class="fa-solid fa-arrow-right" style="transform: scaleX(-1);"></i></a>
+      </div>
+
+      <!-- Image Column (left) -->
+      <div class="about-story-image-col">
+        <div class="about-story-image-frame">
+          <img loading="eager" fetchpriority="high" data-placeholder="about-story-image-1" data-context="A curated flat-lay arrangement of authentic football jerseys from top European clubs — Barcelona, Real Madrid, Liverpool — neatly folded and displayed on a dark navy surface. The composition feels editorial, like a collector displaying prized items, with warm gold accent lighting from the side. One jersey is partially unfolded to reveal the crest detail. The mood is premium, collector-cabinet aesthetic." width="600" height="400" src="/assets/site-about-story-image-1.webp" alt="קולקציית חולצות כדורגל מקוריות של Jearsy Drip">
+          <!-- Accent badge -->
+          <div class="about-story-badge">
+            <span class="badge-num">5+</span>
+            <span class="badge-text">שנות<br>ניסיון</span>
+          </div>
+        </div>
+        <!-- Decorative quote block -->
+        <blockquote class="about-story-quote">
+          <i class="fa-solid fa-quote-right about-story-quote-icon" aria-hidden="true"></i>
+          <p>"כל חולצה מספרת סיפור — אנחנו כאן כדי שהסיפור שלך יגיע אליך בשלמותו."</p>
+          <cite>— מייסדי Jearsy Drip</cite>
+        </blockquote>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="about-team-section" data-layout-spec="אודות-team" dir="rtl">
+  <!-- Decorative dot grid pattern -->
+  <div class="about-team-section__dot-grid" aria-hidden="true"></div>
+
+  <div class="about-team-section__container">
+    <!-- Section Header -->
+    <div class="about-team-section__header">
+      <span class="about-team-section__label">הצוות שלנו</span>
+      <div class="about-team-section__gold-divider" aria-hidden="true">
+        <svg data-no-icon-edit="true" aria-hidden="true" width="60" height="12" viewBox="0 0 60 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="0" y1="6" x2="24" y2="6" stroke="#C8A96B" stroke-width="2"></line>
+          <rect x="26" y="3" width="8" height="6" transform="rotate(45 30 6)" fill="#C8A96B"></rect>
+          <line x1="36" y1="6" x2="60" y2="6" stroke="#C8A96B" stroke-width="2"></line>
+        </svg>
+      </div>
+      <h2 class="about-team-section__title">האנשים מאחורי <span class="about-team-section__title-accent">Jearsy Drip</span></h2>
+      <p class="about-team-section__subtitle">צוות של אוהדי כדורגל אמיתיים, שחיים ונושמים את המשחק — ומביאים לכם את חולצות הכדורגל המקוריות הטובות ביותר.</p>
+    </div>
+
+    <!-- Team Grid -->
+    <div class="about-team-section__grid">
+
+      <!-- Member 1 -->
+      <article class="about-team-section__card">
+        <div class="about-team-section__card-image-wrap">
+          <img loading="lazy" decoding="async" data-placeholder="about-team-image-1" data-context="Professional headshot of a young Israeli male sports apparel entrepreneur in his late 20s, wearing a classic navy football jersey, smiling confidently, clean white studio background, warm natural lighting, editorial portrait style" width="300" height="320" src="/assets/site-about-team-image-1.webp" alt="יאיר כהן - מייסד ומנכ&quot;ל Jearsy Drip" class="about-team-section__card-image">
+          <div class="about-team-section__card-badge">מייסד</div>
+        </div>
+        <div class="about-team-section__card-body">
+          <h3 class="about-team-section__member-name">יאיר כהן</h3>
+          <p class="about-team-section__member-role">מייסד ומנכ"ל</p>
+          <div class="about-team-section__divider-mini" aria-hidden="true"></div>
+          <p class="about-team-section__member-bio">אוהד כדורגל נלהב מגיל שש, יאיר הקים את Jearsy Drip מתוך אהבה אמיתית לחולצות כדורגל מקוריות. חזונו: להפוך כל חולצה לפריט אספנות.</p>
+          <div class="about-team-section__socials">
+            <a href="#" class="about-team-section__social-link" aria-label="לינקדאין"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="about-team-section__social-link" aria-label="אינסטגרם"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Member 2 -->
+      <article class="about-team-section__card">
+        <div class="about-team-section__card-image-wrap">
+          <img loading="lazy" decoding="async" data-placeholder="about-team-image-2" data-context="Professional headshot of a young Israeli woman in her mid 20s, wearing a colorful football jersey from a European club, smiling warmly, clean white studio background, soft natural lighting, editorial portrait style for a sports apparel brand" width="300" height="320" src="/assets/site-about-team-image-2.webp" alt="נועה לוי - מנהלת מוצר ואוצרת קולקציה" class="about-team-section__card-image">
+          <div class="about-team-section__card-badge">קולקציה</div>
+        </div>
+        <div class="about-team-section__card-body">
+          <h3 class="about-team-section__member-name">נועה לוי</h3>
+          <p class="about-team-section__member-role">מנהלת מוצר ואוצרת קולקציה</p>
+          <div class="about-team-section__divider-mini" aria-hidden="true"></div>
+          <p class="about-team-section__member-bio">נועה בוחרת בקפידה כל חולצת כדורגל שנכנסת לחנות — ממשחקי גביע היסטוריים ועד קולקציות עונה עדכניות של קבוצות אירופאיות מובילות.</p>
+          <div class="about-team-section__socials">
+            <a href="#" class="about-team-section__social-link" aria-label="לינקדאין"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="about-team-section__social-link" aria-label="אינסטגרם"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Member 3 -->
+      <article class="about-team-section__card">
+        <div class="about-team-section__card-image-wrap">
+          <img loading="lazy" decoding="async" data-placeholder="about-team-image-3" data-context="Professional headshot of an Israeli man in his early 30s with a friendly smile, wearing a retro football jersey, standing against a clean light studio background, warm editorial lighting, sports apparel brand team photo" width="300" height="320" src="/assets/site-about-team-image-3.webp" alt="אורי שמיר - מנהל שירות לקוחות" class="about-team-section__card-image">
+          <div class="about-team-section__card-badge">שירות</div>
+        </div>
+        <div class="about-team-section__card-body">
+          <h3 class="about-team-section__member-name">אורי שמיר</h3>
+          <p class="about-team-section__member-role">מנהל שירות לקוחות</p>
+          <div class="about-team-section__divider-mini" aria-hidden="true"></div>
+          <p class="about-team-section__member-bio">אורי מוודא שכל לקוח מקבל את החולצה המושלמת בזמן. בין אם מדובר בגודל, אותנטיות או משלוח — הוא כאן בשבילכם 24/7.</p>
+          <div class="about-team-section__socials">
+            <a href="#" class="about-team-section__social-link" aria-label="לינקדאין"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="about-team-section__social-link" aria-label="אינסטגרם"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+    <!-- End Team Grid -->
+
+    <!-- Bottom CTA strip -->
+    <div class="about-team-section__cta-strip">
+      <p class="about-team-section__cta-text">רוצים להצטרף לצוות? אנחנו תמיד מחפשים אוהדי כדורגל עם תשוקה.</p>
+      <a href="/contact" class="about-team-section__cta-btn">דברו איתנו</a>
+    </div>
+
+  </div>
+</section>
+  </main>
+  
+  <footer class="site-footer" dir="rtl" aria-label="כותרת תחתונה של האתר">
+  <div class="footer-top">
+    <div class="footer-container">
+
+      <!-- Column 1: Company Info -->
+      <div class="footer-col footer-brand">
+        <a href="/" class="footer-logo-link">
+          <img src="/assets/jearsy-drip-e-commerce-sports-apparel-logo.webp" alt="Jearsy Drip" class="logo">
+        </a>
+        <p class="footer-tagline">הלבשה ספורטיבית בסגנון ייחודי — אוסף מובחר לאנשים שיודעים מה הם רוצים.</p>
+        <div class="footer-badges">
+          <span class="badge"><i class="fas fa-truck"></i> משלוח חינם מעל ₪299</span>
+          <span class="badge"><i class="fas fa-headset"></i> תמיכה 24/7</span>
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div class="footer-col footer-links-col">
+        <h3 class="footer-heading">ניווט מהיר</h3>
+        <ul class="footer-links">
+          <li><a href="/">בית</a></li>
+          <li><a href="/services">שירותים</a></li>
+          <li><a href="/about">אודות</a></li>
+          <li><a href="/contact">צור קשר</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Contact Info -->
+      <div class="footer-col footer-contact-col">
+        <h3 class="footer-heading">יצירת קשר</h3>
+        <ul class="footer-contact">
+          <li>
+            <span class="contact-icon"><i class="fas fa-envelope"></i></span>
+            <span class="contact-text"><a href="mailto:[business_email]">[business_email]</a></span>
+          </li>
+          <li>
+            <span class="contact-icon"><i class="fas fa-phone"></i></span>
+            <span class="contact-text"><a href="tel:[business_phone]">[business_phone]</a></span>
+          </li>
+          <li><a href="/"><span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span>
+            <span class="contact-text">[business_address]</span></a></li>
+        </ul>
+        <div class="footer-hours">
+          <h4 class="footer-subheading">שעות פעילות</h4>
+          <p><span>ראשון — חמישי</span><span>09:00 – 18:00</span></p>
+          <p><span>שישי</span><span>09:00 – 13:00</span></p>
+          <p><span>שבת</span><span>סגור</span></p>
+        </div>
+      </div>
+
+      <!-- Column 4: Social Media -->
+      <div class="footer-col footer-social-col">
+        <h3 class="footer-heading">עקבו אחרינו</h3>
+        <p class="footer-social-desc">הצטרפו לקהילה שלנו ברשתות החברתיות</p>
+        <div class="footer-social">
+          
+          
+          
+        </div>
+        <div class="footer-newsletter">
+          <p class="newsletter-label">הירשמו לניוזלטר שלנו</p>
+          <div class="newsletter-form">
+            <input type="email" placeholder="האימייל שלך" aria-label="כתובת אימייל להרשמה לניוזלטר">
+            <button type="button" aria-label="הרשמה לניוזלטר">הרשמה</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="footer-bottom">
+    <div class="footer-container footer-bottom-inner">
+      <p class="footer-copyright">© 2026 Jearsy Drip. כל הזכויות שמורות.</p>
+      <div class="footer-legal">
+        <a href="/privacy">מדיניות פרטיות</a>
+        <span class="legal-sep" aria-hidden="true">|</span>
+        <a href="/terms">תנאי שימוש</a><span class="separator">|</span>
+            <a href="/return-policy" aria-label="מדיניות החזרות">
+              מדיניות החזרות
+            </a>
+        <span class="legal-sep" aria-hidden="true">|</span>
+        <a href="/accessibility">נגישות</a>
+        <span class="legal-sep" aria-hidden="true">|</span>
+        <a href="https://zappy5.com" target="_blank" class="zappy-attribution">נוצר באמצעות Zappy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+  
+  <a href="https://wa.me/[whatsapp_handle]" class="whatsapp-float" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  
+  <div data-integration="accessibility:toolbar"></div>
+
+    <script src="/script.js"></script>
+
+    <script id="zappy-mobile-submenu-script">
+    (function() {
+      function initMobileSubmenuToggles() {
+        if (window.innerWidth > 768) {
+          document.querySelectorAll('.mobile-submenu-toggle').forEach(function(btn) { btn.remove(); });
+          document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) { menu.classList.remove('mobile-expanded'); });
+          return;
+        }
+        var items = document.querySelectorAll('.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)');
+        items.forEach(function(li) {
+          if (li.querySelector('.mobile-submenu-toggle')) return;
+          var submenu = li.querySelector('.sub-menu');
+          var parentLink = li.querySelector(':scope > a');
+          if (!submenu || !parentLink) return;
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'mobile-submenu-toggle';
+          toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+          toggleBtn.setAttribute('type', 'button');
+          parentLink.insertAdjacentElement('afterend', toggleBtn);
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+              if (menu !== submenu) { menu.classList.remove('mobile-expanded'); var t = menu.parentElement.querySelector('.mobile-submenu-toggle'); if(t) t.classList.remove('expanded'); }
+            });
+            submenu.classList.toggle('mobile-expanded');
+            toggleBtn.classList.toggle('expanded');
+          });
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileSubmenuToggles); }
+      else { initMobileSubmenuToggles(); }
+      var resizeTimer; window.addEventListener('resize', function() { clearTimeout(resizeTimer); resizeTimer = setTimeout(initMobileSubmenuToggles, 250); });
+      // Re-initialize when mobile menu becomes visible (MutationObserver)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes') {
+            var target = mutation.target;
+            if (target.classList && (target.classList.contains('active') || target.classList.contains('open'))) {
+              setTimeout(initMobileSubmenuToggles, 100);
+            }
+          }
+        });
+      });
+      setTimeout(function() {
+        document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu, nav').forEach(function(menu) {
+          observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+        });
+      }, 500);
+    })();
+    </script>
+</body>
+</html>
